@@ -1,0 +1,55 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:18080/"
+      ],
+      "numberOfRuns": 1,
+        "settings": {
+          "preset": "desktop",
+          "extraHeaders": {
+            "Authorization": "Basic YWRtaW46YWRtaW4xMjM="
+          },
+          "onlyCategories": [
+          "performance",
+          "accessibility",
+          "best-practices",
+          "seo"
+        ],
+        "chromeFlags": "--headless --no-sandbox --disable-dev-shm-usage"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          "warn",
+          {
+            "minScore": 0.7
+          }
+        ],
+        "categories:accessibility": [
+          "warn",
+          {
+            "minScore": 0.85
+          }
+        ],
+        "categories:best-practices": [
+          "warn",
+          {
+            "minScore": 0.8
+          }
+        ],
+        "categories:seo": [
+          "warn",
+          {
+            "minScore": 0.7
+          }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "target/lighthouse"
+    }
+  }
+}

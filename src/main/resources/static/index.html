@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skola stranih jezika</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #647084;
+            --line: #d8dee8;
+            --surface: #ffffff;
+            --page: #f4f6f9;
+            --brand: #1f5a7a;
+            --brand-dark: #153e55;
+            --green: #25745c;
+            --warning: #9a5b18;
+            --danger: #a43d3d;
+        }
+
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--page);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        button, input, select { font: inherit; }
+        button { cursor: pointer; }
+
+        header {
+            min-height: 150px;
+            color: white;
+            background: var(--brand-dark);
+            border-bottom: 5px solid #d4a74e;
+        }
+
+        .header-inner, main {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .header-inner {
+            padding: 28px 0 22px;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .session-box { display: flex; align-items: center; gap: 10px; }
+        .session-box span { color: #dce7ed; font-size: 13px; }
+        .session-box form { margin: 0; }
+
+        h1, h2, h3, p { margin-top: 0; }
+        h1 { margin-bottom: 8px; font-size: 30px; letter-spacing: 0; }
+        header p { margin: 0; color: #dce7ed; }
+
+        .primary-btn, .secondary-btn, .danger-btn, .action-btn {
+            border: 0;
+            border-radius: 5px;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+        }
+
+        .primary-btn { background: var(--brand); }
+        .primary-btn:hover { background: #17455f; }
+        .danger-btn { background: var(--danger); padding: 6px 10px; font-size: 13px; }
+        .action-btn { background: var(--green); padding: 6px 10px; font-size: 13px; }
+        .secondary-btn { display: none; width: 100%; margin-top: 8px; background: var(--muted); }
+        .secondary-btn.show { display: block; }
+
+        main { padding: 24px 0 50px; }
+
+        .reminders {
+            margin-bottom: 22px;
+            border: 1px solid #e2c58f;
+            border-left: 5px solid var(--warning);
+            border-radius: 6px;
+            background: #fffaf0;
+            padding: 16px;
+        }
+        .reminders h2 { margin-bottom: 5px; font-size: 18px; }
+        .reminders > p { color: var(--muted); margin-bottom: 14px; }
+        .reminder-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .reminder-group { border-top: 1px solid #ead8b5; padding-top: 12px; }
+        .reminder-group h3 { font-size: 14px; margin-bottom: 8px; }
+        .reminder-group ul { margin: 0; padding-left: 20px; }
+        .reminder-group li { margin: 6px 0; }
+        .reminder-empty { color: var(--green); font-weight: 600; }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .metric {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-top: 4px solid var(--brand);
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 94px;
+        }
+
+        .metric span { display: block; color: var(--muted); font-size: 13px; }
+        .metric strong { display: block; margin-top: 8px; font-size: 28px; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 18px;
+        }
+
+        .tab {
+            border: 0;
+            border-bottom: 3px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            padding: 11px 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tab.active { color: var(--brand-dark); border-bottom-color: var(--brand); }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .form-box, .table-box {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+        }
+
+        .form-box { padding: 18px; }
+        .table-box { overflow-x: auto; }
+        .student-payments { margin-top: 18px; }
+        .box-title {
+            padding: 15px 17px;
+            border-bottom: 1px solid var(--line);
+            margin: 0;
+            font-size: 16px;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 5px;
+            color: #344054;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            min-height: 40px;
+            border: 1px solid #bac4d1;
+            border-radius: 4px;
+            padding: 8px 10px;
+            background: white;
+        }
+
+        input:focus, select:focus { outline: 2px solid #a8c6d8; border-color: var(--brand); }
+
+        .check-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 7px;
+            margin-top: 7px;
+        }
+
+        .check-grid label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin: 0;
+            padding: 7px;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .check-grid input { width: auto; min-height: auto; }
+        .check-grid .disabled-choice { opacity: .45; }
+        .member-picker { display: grid; grid-template-columns: 1fr auto; gap: 7px; align-items: end; }
+        .member-picker button { min-height: 40px; }
+        .member-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+        .member-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid #b8c9d3;
+            border-radius: 4px;
+            padding: 6px 8px;
+            background: #edf5f8;
+            color: var(--brand-dark);
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .member-chip button {
+            border: 0;
+            background: transparent;
+            color: var(--danger);
+            padding: 0 2px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        form .primary-btn { width: 100%; margin-top: 16px; }
+        form .group-create-btn { width: 100%; margin-top: 8px; padding: 10px 15px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+        th { color: #344054; background: #f8fafc; font-size: 12px; text-transform: uppercase; }
+        tr:last-child td { border-bottom: 0; }
+
+        .status {
+            display: inline-block;
+            padding: 3px 7px;
+            border-radius: 4px;
+            background: #e7f2ed;
+            color: var(--green);
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .status.unpaid { color: var(--warning); background: #fff2df; }
+
+        .notice {
+            display: none;
+            margin-bottom: 16px;
+            border: 1px solid;
+            border-radius: 5px;
+            padding: 11px 13px;
+        }
+
+        .notice.show { display: block; }
+        .notice.success { color: #155c45; background: #e9f6f0; border-color: #aad9c7; }
+        .notice.error { color: #7b2929; background: #fbebeb; border-color: #e2b2b2; }
+        .credentials { margin-bottom: 16px; border: 1px solid #d2b36c; border-left: 5px solid var(--warning); background: #fff8e8; padding: 14px; border-radius: 5px; }
+        .credentials strong { display: block; margin-bottom: 8px; }
+        .credentials p { margin: 8px 0; color: #654515; }
+        .credentials-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .credentials-actions a, .credentials-actions button {
+            border: 0;
+            border-radius: 4px;
+            padding: 8px 11px;
+            color: white;
+            background: var(--brand);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .credentials-actions button { background: var(--muted); }
+        .password-box { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 18px; }
+        .password-box label { margin: 0; }
+
+        .empty { padding: 25px; color: var(--muted); text-align: center; }
+        .role-hidden { display: none !important; }
+        .student-overview { display: grid; gap: 18px; }
+        .student-overview[hidden] { display: none; }
+        .account-summary { display: grid; grid-template-columns: 1fr; gap: 0; margin-bottom: 18px; }
+        .account-summary div { border-bottom: 1px solid var(--line); padding: 10px 0; }
+        .account-summary span { display: block; color: var(--muted); font-size: 12px; }
+        .account-actions { display: flex; justify-content: flex-start; }
+        .schedule-controls { display: grid; grid-template-columns: repeat(2, minmax(180px, 1fr)); gap: 12px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+        .schedule-controls label { margin: 0; }
+        .schedule-summary { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 10px; padding: 15px 17px; }
+        .schedule-summary div { border-left: 4px solid var(--brand); background: #f8fafc; padding: 10px; }
+        .schedule-summary span { display: block; color: var(--muted); font-size: 12px; }
+        .schedule-summary strong { font-size: 22px; }
+
+        @media (max-width: 980px) {
+            .metrics { grid-template-columns: repeat(3, 1fr); }
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 620px) {
+            .header-inner { align-items: start; flex-direction: column; }
+            .metrics { grid-template-columns: repeat(2, 1fr); }
+            .reminder-grid { grid-template-columns: 1fr; }
+            .password-box { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <div>
+            <h1>Privatna skola stranih jezika</h1>
+            <p id="opisUloge">Pregled podataka skole prema dozvolama prijavljenog korisnika</p>
+        </div>
+        <div class="session-box">
+            <span id="prijavljeniKorisnik"></span>
+            <button id="mojNalogDugme" class="secondary-btn show" type="button" onclick="otvoriMojNalog()" hidden>Moj nalog</button>
+            <button class="danger-btn" type="button" onclick="odjaviSe()">Odjavi se</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div id="notice" class="notice"></div>
+    <div id="credentialsNotice" class="credentials" hidden></div>
+
+    <section id="adminPodsetnici" class="reminders" data-admin-only hidden>
+        <h2>Administratorski podsetnici</h2>
+        <p id="podsetniciPeriod">Neizmirene obaveze za tekuci mesec.</p>
+        <div class="reminder-grid">
+            <div class="reminder-group">
+                <h3>Ucenici koji nisu platili</h3>
+                <div id="neplaceneSkolarine"></div>
+            </div>
+            <div class="reminder-group">
+                <h3>Profesori koji nisu isplaceni</h3>
+                <div id="neisplaceniProfesori"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="metrics" class="metrics" aria-label="Statistika sistema">
+        <div class="metric"><span>Ucenici</span><strong id="mUcenici">-</strong></div>
+        <div class="metric"><span>Profesori</span><strong id="mProfesori">-</strong></div>
+        <div class="metric"><span>Kursevi</span><strong id="mKursevi">-</strong></div>
+        <div class="metric"><span>Upisi</span><strong id="mUpisi">-</strong></div>
+        <div class="metric"><span>Termini</span><strong id="mTermini">-</strong></div>
+        <div class="metric"><span>Uplate</span><strong id="mUplate">-</strong></div>
+    </section>
+
+    <nav id="mainTabs" class="tabs" aria-label="Delovi sistema">
+        <button class="tab active" data-panel="ucenici">Ucenici</button>
+        <button class="tab" data-panel="profesori">Profesori</button>
+        <button class="tab" data-panel="kursevi">Kursevi</button>
+        <button class="tab" data-panel="grupe">Grupe</button>
+        <button class="tab" data-panel="upisi">Upisi</button>
+        <button class="tab" data-panel="termini">Termini</button>
+        <button class="tab" data-panel="uplate">Uplate</button>
+        <button class="tab" data-panel="isplate" data-admin-only>Isplate profesora</button>
+    </nav>
+
+    <section id="ucenici" class="panel active">
+        <div class="workspace">
+            <form id="ucenikForm" class="form-box">
+                <h2 class="box-title">Registracija ucenika</h2>
+                <label for="uIme">Ime</label><input id="uIme" required>
+                <label for="uPrezime">Prezime</label><input id="uPrezime" required>
+                <label for="uKontakt">Kontakt</label><input id="uKontakt" required>
+                <label for="uDatum">Datum upisa</label><input id="uDatum" type="date" required>
+                <button class="primary-btn" type="submit">Sacuvaj ucenika</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('ucenik')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Evidentirani ucenici</h2><div id="uceniciTabela"></div></div>
+        </div>
+        <div class="table-box student-payments" data-admin-only>
+            <h2 class="box-title" id="ucenikUplateNaslov">Mesecne obaveze ucenika</h2>
+            <div id="ucenikUplateTabela" class="empty">Izaberite ucenika da biste videli placene i neplacene mesece.</div>
+        </div>
+    </section>
+
+    <section id="profesori" class="panel">
+        <div class="workspace">
+            <form id="profesorForm" class="form-box">
+                <h2 class="box-title">Evidentiranje profesora</h2>
+                <label for="pIme">Ime</label><input id="pIme" required>
+                <label for="pPrezime">Prezime</label><input id="pPrezime" required>
+                <label for="pLicenca">Broj licence</label><input id="pLicenca" required>
+                <label for="pDatum">Datum angazovanja</label><input id="pDatum" type="date" required>
+                <label for="pNaknada">Mesecna naknada</label><input id="pNaknada" type="number" min="0" required>
+                <label>Jezici</label><div id="pJezici" class="check-grid"></div>
+                <label>Nivoi</label><div id="pNivoi" class="check-grid"></div>
+                <button class="primary-btn" type="submit">Sacuvaj profesora</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('profesor')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Evidentirani profesori</h2><div id="profesoriTabela"></div></div>
+        </div>
+        <div class="table-box student-payments">
+            <h2 class="box-title" id="profesorIsplateNaslov">Mesecne isplate profesora</h2>
+            <div id="profesorIsplateTabela" class="empty">Izaberite profesora da biste videli isplacene i neisplacene mesece.</div>
+        </div>
+    </section>
+
+    <section id="kursevi" class="panel">
+        <div class="workspace">
+            <form id="kursForm" class="form-box">
+                <h2 class="box-title">Kreiranje kursa</h2>
+                <label for="kJezik">Jezik</label><select id="kJezik"></select>
+                <label for="kNivo">Nivo</label><select id="kNivo"></select>
+                <label for="kTip">Tip kursa</label><select id="kTip"><option>GRUPNI</option><option>INDIVIDUALNI</option></select>
+                <label for="kCena">Mesecna cena</label><input id="kCena" type="number" min="0" required>
+                <button class="primary-btn" type="submit">Sacuvaj kurs</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('kurs')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Aktuelni kursevi</h2><div id="kurseviTabela"></div></div>
+        </div>
+    </section>
+
+    <section id="upisi" class="panel">
+        <div class="workspace">
+            <form id="upisForm" class="form-box">
+                <h2 class="box-title">Dodavanje ucenika u grupu</h2>
+                <label for="upUcenik">Ucenik</label><select id="upUcenik"></select>
+                <label for="upGrupa">Postojeca grupa</label><select id="upGrupa"></select>
+                <label for="upKurs">Kurs</label><select id="upKurs" disabled></select>
+                <label for="upDatum">Datum pocetka</label><input id="upDatum" type="date" required>
+                <button class="primary-btn" type="submit">Dodaj</button>
+                <button class="action-btn group-create-btn" type="button" onclick="otvoriKreiranjeGrupe()">Kreiraj novu grupu</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('upis')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Evidentirani upisi</h2><div id="upisiTabela"></div></div>
+        </div>
+    </section>
+
+    <section id="grupe" class="panel">
+        <div class="workspace">
+            <form id="grupaForm" class="form-box">
+                <h2 class="box-title">Kreiranje nastavne grupe</h2>
+                <label for="gNaziv">Naziv grupe</label><input id="gNaziv" required>
+                <label for="gTip">Tip nastave</label><select id="gTip"><option value="GRUPNI">Grupni cas</option><option value="INDIVIDUALNI">Individualni cas</option></select>
+                <label id="gRedosledLabel" for="gRedosled">Prvo biram</label><select id="gRedosled"><option value="profesor">Profesora</option><option value="kurs">Kurs / jezik</option></select>
+                <label id="gProfesorLabel" for="gProfesor">Profesor</label><select id="gProfesor"></select>
+                <label for="gKurs">Kurs</label><select id="gKurs" required></select>
+                <label id="gUceniciLabel" for="gUcenikIzbor">Ucenici grupe</label>
+                <div class="member-picker">
+                    <select id="gUcenikIzbor"></select>
+                    <button id="gDodajUcenika" class="action-btn" type="button" onclick="dodajIzabranogUcenikaUFormu()">Dodaj</button>
+                </div>
+                <div id="gUcenici" class="member-list"></div>
+                <button class="primary-btn" type="submit">Sacuvaj grupu</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('grupa')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Grupe i individualni ucenici</h2><div id="grupeTabela"></div></div>
+        </div>
+    </section>
+
+    <section id="termini" class="panel">
+        <div class="workspace">
+            <form id="terminForm" class="form-box">
+                <h2 class="box-title">Zakazivanje termina</h2>
+                <label for="tGrupa">Grupa / individualni ucenik</label><select id="tGrupa"></select>
+                <label for="tProfesor">Profesor</label><select id="tProfesor" disabled></select>
+                <label for="tKurs">Kurs</label><select id="tKurs" disabled></select>
+                <label for="tOd">Vreme pocetka</label><input id="tOd" type="datetime-local" required>
+                <label for="tDo">Vreme zavrsetka</label><input id="tDo" type="datetime-local" required>
+                <button class="primary-btn" type="submit">Zakazi termin</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('termin')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Raspored termina</h2><div id="terminiTabela"></div></div>
+        </div>
+        <div class="table-box student-payments">
+            <h2 class="box-title">Sedmicni pregled casova po profesoru</h2>
+            <label for="sedmicaDatum">Datum u sedmici</label><input id="sedmicaDatum" type="date">
+            <div id="sedmicniPregledTabela"></div>
+        </div>
+    </section>
+
+    <section id="uplate" class="panel">
+        <div class="workspace">
+            <form id="uplataForm" class="form-box">
+                <h2 class="box-title">Evidentiranje uplate</h2>
+                <label for="ulUcenik">Ucenik</label><select id="ulUcenik"></select>
+                <label for="ulUpis">Kurs / upis ucenika</label><select id="ulUpis"></select>
+                <label for="ulMesec">Mesec</label><input id="ulMesec" type="number" min="1" max="12" required>
+                <label for="ulGodina">Godina</label><input id="ulGodina" type="number" min="2020" required>
+                <label for="ulIznos">Iznos</label><input id="ulIznos" type="number" min="0" required>
+                <label for="ulDatum">Datum uplate</label><input id="ulDatum" type="date" required>
+                <button class="primary-btn" type="submit">Evidentiraj uplatu</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('uplata')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Uplate izabranog upisa</h2><div id="uplateTabela" class="empty">Izaberite upis da biste videli uplate.</div></div>
+        </div>
+    </section>
+
+    <section id="isplate" class="panel" data-admin-only>
+        <div class="workspace">
+            <form id="isplataForm" class="form-box">
+                <h2 class="box-title">Evidentiranje isplate profesoru</h2>
+                <label for="isProfesor">Profesor</label><select id="isProfesor"></select>
+                <label for="isMesec">Mesec</label><input id="isMesec" type="number" min="1" max="12" required>
+                <label for="isGodina">Godina</label><input id="isGodina" type="number" min="2020" required>
+                <label for="isIznos">Iznos</label><input id="isIznos" type="number" min="0" required>
+                <label for="isDatum">Datum isplate</label><input id="isDatum" type="date" required>
+                <button class="primary-btn" type="submit">Evidentiraj isplatu</button>
+                <button class="secondary-btn" type="button" onclick="otkaziIzmenu('isplata')">Otkazi izmenu</button>
+            </form>
+            <div class="table-box"><h2 class="box-title">Isplate izabranog profesora</h2><div id="isplateTabela" class="empty">Izaberite profesora da biste videli isplate.</div></div>
+        </div>
+    </section>
+
+    <nav id="studentTabs" class="tabs" hidden>
+        <button class="tab active" type="button" onclick="prikaziUcenickiDeo('studentTermini', this)">Privatni casovi</button>
+    </nav>
+
+    <section id="mojPregled" class="student-overview" hidden>
+        <div id="studentTermini" class="student-view">
+            <div class="table-box">
+                <h2 class="box-title">Zajednicki raspored casova</h2>
+                <div class="schedule-controls">
+                    <label>Prikaz prema
+                        <select id="rasporedTipFiltera">
+                            <option value="ucenik">Uceniku</option>
+                            <option value="grupa">Grupi</option>
+                        </select>
+                    </label>
+                    <label>Izaberite
+                        <select id="rasporedVrednostFiltera"></select>
+                    </label>
+                </div>
+                <div class="schedule-summary">
+                    <div><span>Aktivni termini</span><strong id="brojAktivnihTermina">0</strong></div>
+                    <div><span>Odrzani casovi</span><strong id="brojOdrzanihTermina">0</strong></div>
+                    <div><span>Otkazani casovi</span><strong id="brojOtkazanihTermina">0</strong></div>
+                </div>
+                <div id="mojiTerminiTabela"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="mojNalogPanel" class="student-overview" hidden>
+        <div class="table-box">
+            <h2 class="box-title">Moj nalog</h2>
+            <div id="mojNalogPodaci" class="account-summary"></div>
+            <form id="kontaktForm" hidden>
+                <label for="mojKontakt">Kontakt</label><input id="mojKontakt" required>
+                <button class="primary-btn" type="submit">Sacuvaj kontakt</button>
+            </form>
+        </div>
+        <div class="table-box" id="mojiKurseviNalog" hidden>
+            <h2 class="box-title">Moji kursevi i profesori</h2>
+            <div id="mojiKurseviNalogTabela"></div>
+            <div id="mojiProfesoriNalogTabela"></div>
+        </div>
+        <div class="table-box" id="promenaLozinkePanel">
+            <h2 class="box-title">Promena lozinke</h2>
+            <form id="lozinkaForm" class="password-box">
+                <label>Trenutna lozinka<input id="trenutnaLozinka" type="password" required></label>
+                <label>Nova lozinka<input id="novaLozinka" type="password" minlength="8" required></label>
+                <button class="secondary-btn show" type="submit">Promeni lozinku</button>
+            </form>
+        </div>
+        <div class="account-actions">
+            <button class="secondary-btn show" type="button" onclick="zatvoriMojNalog()">Nazad</button>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    const JEZICI = ["ENGLESKI", "NEMACKI", "FRANCUSKI", "SPANSKI", "ITALIJANSKI"];
+    const NIVOI = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    const state = { ucenici: [], profesori: [], kursevi: [], grupe: [], upisi: [], termini: [], grupaUcenikIds: [], mojPregled: null, izabraniUcenikId: null, izabraniProfesorId: null, izmena: null, korisnik: null, admin: false, profesor: false, ucenik: false };
+
+    const byId = id => document.getElementById(id);
+    const today = () => new Date().toISOString().slice(0, 10);
+    const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    async function api(path, options = {}) {
+        const token = sessionStorage.getItem("tabToken");
+        const response = await fetch(path, { headers: { "Content-Type": "application/json", ...(token ? { "X-Tab-Token": token } : {}), ...(options.headers || {}) }, ...options });
+        if (response.status === 401) {
+            sessionStorage.removeItem("tabToken");
+            window.location.replace("/prijava.html");
+            throw new Error("Prijava je istekla.");
+        }
+        if (!response.ok) {
+            let message = "Doslo je do greske.";
+            try { message = (await response.json()).message || message; } catch (_) { message = await response.text() || message; }
+            throw new Error(message);
+        }
+        return response.status === 204 ? null : response.json();
+    }
+
+    function notify(message, type = "success") {
+        const notice = byId("notice");
+        notice.textContent = message;
+        notice.className = `notice show ${type}`;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setTimeout(() => notice.className = "notice", 4500);
+    }
+
+    function table(headers, rows) {
+        if (!rows.length) return '<div class="empty">Nema evidentiranih podataka.</div>';
+        return `<table><thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+    }
+
+    function nameOf(collection, id, fallback) {
+        const item = collection.find(x => x.id === id);
+        return item ? fallback(item) : `ID ${id}`;
+    }
+
+    function optionList(items, label) {
+        return items.length ? items.map(x => `<option value="${x.id}">${esc(label(x))}</option>`).join("") : '<option value="">Nema podataka</option>';
+    }
+
+    function render() {
+        const ucenikHeaders = state.admin
+            ? ["ID", "Ime i prezime", "Kontakt", "Datum upisa", "Uplate", "Akcija"]
+            : ["ID", "Ime i prezime", "Kontakt", "Datum upisa"];
+        byId("uceniciTabela").innerHTML = table(ucenikHeaders, state.ucenici.map(x => state.admin
+            ? `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${esc(x.kontakt)}</td><td>${x.datumUpisa}</td><td><button class="action-btn" onclick="loadUcenikUplate(${x.id})">Pregled</button></td><td><button class="action-btn" onclick="urediUcenika(${x.id})">Uredi</button></td></tr>`
+            : `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${esc(x.kontakt)}</td><td>${x.datumUpisa}</td></tr>`));
+        byId("profesoriTabela").innerHTML = table(["ID", "Profesor", "Jezici", "Nivoi", "Licenca", "Angazovan od", "Naknada", "Isplate", "Akcija"], state.profesori.map(x =>
+            `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${x.jezici.join(", ")}</td><td>${x.nivoi.join(", ")}</td><td>${esc(x.brojLicence)}</td><td>${x.datumAngazovanja}</td><td>${x.mesecnaNaknada}</td><td><button class="action-btn" onclick="loadProfesorIsplate(${x.id})">Pregled</button></td><td><button class="action-btn" onclick="urediProfesora(${x.id})">Uredi</button></td></tr>`));
+        byId("kurseviTabela").innerHTML = table(["ID", "Jezik", "Nivo", "Tip", "Akcija"], state.kursevi.map(x =>
+            `<tr><td>${x.id}</td><td>${x.jezik}</td><td>${x.nivo}</td><td>${x.tip}</td><td><button class="action-btn" onclick="urediKurs(${x.id})">Uredi</button></td></tr>`));
+        const grupaHeaders = ["ID", "Naziv", "Profesor", "Kurs", "Popunjenost", "Akcija"];
+        byId("grupeTabela").innerHTML = table(grupaHeaders, state.grupe.map(x =>
+            `<tr><td>${x.id}</td><td>${esc(x.naziv)}</td><td>${state.profesor ? "Moj nalog" : esc(nameOf(state.profesori, x.profesorId, p => `${p.ime} ${p.prezime}`))}</td><td>${esc(nameOf(state.kursevi, x.kursId, k => `${k.jezik} ${k.nivo} - ${k.tip}`))}</td><td>${x.brojUcenika}/${x.kapacitet}</td><td><button class="action-btn" onclick="dodajUcenikaUGrupu(${x.id})">${x.brojUcenika < x.kapacitet ? "Dodaj ucenika" : "Uredi ucenike"}</button> <button class="action-btn" onclick="urediGrupu(${x.id})">Uredi grupu</button></td></tr>`));
+        const upisHeaders = state.admin
+            ? ["ID", "Ucenik", "Kurs", "Grupa / profesor", "Pocetak", "Status", "Akcija"]
+            : ["ID", "Ucenik", "Kurs", "Grupa / profesor", "Pocetak", "Status"];
+        byId("upisiTabela").innerHTML = table(upisHeaders, state.upisi.map(x =>
+            `<tr><td>${x.id}</td><td>${esc(nameOf(state.ucenici, x.ucenikId, u => `${u.ime} ${u.prezime}`))}</td><td>${esc(nameOf(state.kursevi, x.kursId, k => `${k.jezik} ${k.nivo}`))}</td><td>${x.grupaId ? esc(nameOf(state.grupe, x.grupaId, g => `${g.naziv} / ${state.profesor ? "Moj nalog" : nameOf(state.profesori, g.profesorId, p => `${p.ime} ${p.prezime}`)}`)) : "Stari upis bez grupe"}</td><td>${x.datumPocetka}</td><td><span class="status">${x.status}</span></td>${state.admin ? `<td><button class="action-btn" onclick="urediUpis(${x.id})">Uredi</button></td>` : ""}</tr>`));
+        byId("terminiTabela").innerHTML = table(["ID", "Profesor", "Kurs", "Pocetak", "Status", "Zakazao", "Otkazao", "Akcija"], state.termini.map(x =>
+            `<tr><td>${x.id}</td><td>${state.profesor ? "Moj nalog" : esc(nameOf(state.profesori, x.profesorId, p => `${p.ime} ${p.prezime}`))}</td><td>${esc(nameOf(state.kursevi, x.kursId, k => `${k.jezik} ${k.nivo}`))}</td><td>${x.vremeOd.replace("T", " ")}</td><td><span class="status">${x.status}</span></td><td>${esc(x.zakazaoKorisnik)}</td><td>${esc(x.otkazaoKorisnik ?? "-")}</td><td>${state.admin ? `<button class="action-btn" onclick="urediTermin(${x.id})">Uredi</button>` : ""} ${x.status === "ZAKAZAN" ? `<button class="action-btn" onclick="odrziTermin(${x.id})">Odrzan</button> <button class="danger-btn" onclick="otkaziTermin(${x.id})">Otkazi</button>` : ""}</td></tr>`));
+
+        byId("upUcenik").innerHTML = optionList(state.ucenici, x => `${x.ime} ${x.prezime}`);
+        byId("upGrupa").innerHTML = optionList(state.grupe.filter(x => x.brojUcenika < x.kapacitet), x =>
+            `${x.naziv} - ${state.profesor ? "Moj nalog" : nameOf(state.profesori, x.profesorId, p => `${p.ime} ${p.prezime}`)} (${x.brojUcenika}/${x.kapacitet})`);
+        pripremiIzborGrupe();
+        postaviKursIzGrupe();
+        byId("tGrupa").innerHTML = optionList(state.grupe, x => `${x.naziv} (${x.brojUcenika}/${x.kapacitet})`);
+        byId("isProfesor").innerHTML = optionList(state.profesori, x => `${x.ime} ${x.prezime}`);
+        postaviTerminIzGrupe();
+        pripremiIzborUplate();
+        if (state.admin) {
+            loadUplate();
+            loadIsplate();
+            if (state.izabraniUcenikId) loadUcenikUplate(state.izabraniUcenikId);
+            if (state.izabraniProfesorId) loadProfesorIsplate(state.izabraniProfesorId);
+        }
+        if (state.admin || state.profesor) loadSedmicniPregled();
+    }
+
+    async function loadAll() {
+        try {
+            if (state.ucenik) {
+                state.mojPregled = await api("/api/moj-pregled");
+                renderMojPregled(state.mojPregled);
+                return;
+            }
+            if (state.profesor) {
+                const [ucenici, kursevi, grupe, termini] = await Promise.all([
+                    api("/api/ucenici"), api("/api/kursevi"), api("/api/grupe"), api("/api/termini")
+                ]);
+                const upisi = await api("/api/upisi");
+                Object.assign(state, { ucenici, kursevi, grupe, termini, upisi, profesori: [] });
+                render();
+                return;
+            }
+            const [stats, ucenici, profesori, kursevi, grupe, upisi, termini] = await Promise.all([
+                api("/api/statistika"), api("/api/ucenici"), api("/api/profesori"), api("/api/kursevi"), api("/api/grupe"), api("/api/upisi"), api("/api/termini")
+            ]);
+            Object.assign(state, { ucenici, profesori, kursevi, grupe, upisi, termini });
+            byId("mUcenici").textContent = stats.brojUcenika;
+            byId("mProfesori").textContent = stats.brojProfesora;
+            byId("mKursevi").textContent = stats.brojKurseva;
+            byId("mUpisi").textContent = stats.brojUpisa;
+            byId("mTermini").textContent = stats.brojTermina;
+            byId("mUplate").textContent = stats.brojUplata;
+            render();
+            if (state.admin) await loadPodsetnike();
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function loadKorisnika() {
+        state.korisnik = await api("/api/auth/me");
+        state.admin = state.korisnik.uloge.includes("ADMIN");
+        state.profesor = state.korisnik.uloge.includes("PROFESOR");
+        state.ucenik = state.korisnik.uloge.includes("UCENIK");
+        byId("promenaLozinkePanel").hidden = state.ucenik;
+        byId("mojNalogDugme").hidden = !state.profesor;
+        byId("prijavljeniKorisnik").textContent = `${state.korisnik.prikaznoIme} (${state.korisnik.uloge.join(", ")})`;
+        byId("opisUloge").textContent = state.admin
+            ? "Administratorski pregled ucenika, kurseva, termina, uplata i isplata"
+            : state.profesor
+                ? "Profesorski pregled ucenika i sopstvenih termina"
+                : "Zajednicki pregled rasporeda po uceniku ili grupi";
+        document.querySelectorAll("[data-admin-only]").forEach(element => element.hidden = !state.admin);
+        byId("gRedosledLabel").hidden = state.profesor;
+        byId("gRedosled").hidden = state.profesor;
+        byId("gProfesorLabel").hidden = state.profesor;
+        byId("gProfesor").hidden = state.profesor;
+        primeniPrikazUloge();
+    }
+
+    function primeniPrikazUloge() {
+        byId("metrics").classList.toggle("role-hidden", !state.admin);
+        byId("mainTabs").classList.toggle("role-hidden", state.ucenik);
+        byId("studentTabs").hidden = !state.ucenik;
+        byId("mojPregled").hidden = !state.ucenik;
+        byId("mojNalogPanel").hidden = true;
+        byId("adminPodsetnici").hidden = !state.admin;
+
+        const dozvoljeniPaneli = state.admin
+            ? ["ucenici", "profesori", "kursevi", "grupe", "upisi", "termini", "uplate", "isplate"]
+            : state.profesor ? ["ucenici", "grupe", "upisi", "termini"] : [];
+
+        document.querySelectorAll(".tab").forEach(tab => {
+            tab.classList.toggle("role-hidden", !dozvoljeniPaneli.includes(tab.dataset.panel));
+            tab.classList.remove("active");
+        });
+        document.querySelectorAll(".panel").forEach(panel => {
+            panel.classList.toggle("role-hidden", !dozvoljeniPaneli.includes(panel.id));
+            panel.classList.remove("active");
+        });
+        if (dozvoljeniPaneli.length) {
+            document.querySelector(`.tab[data-panel="${dozvoljeniPaneli[0]}"]`)?.classList.add("active");
+            byId(dozvoljeniPaneli[0]).classList.add("active");
+        }
+    }
+
+    function renderMojPregled(pregled) {
+        state.mojPregled = pregled;
+        pripremiFilterRasporeda();
+        prikaziFiltriraniRaspored();
+    }
+
+    function pripremiFilterRasporeda() {
+        const tip = byId("rasporedTipFiltera").value;
+        const prethodna = byId("rasporedVrednostFiltera").value;
+        const vrednosti = [...new Set(state.mojPregled.termini.map(x => tip === "grupa" ? x.grupa : x.ucenik))].sort();
+        byId("rasporedVrednostFiltera").innerHTML =
+            `<option value="">Svi</option>${vrednosti.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join("")}`;
+        if (vrednosti.includes(prethodna)) byId("rasporedVrednostFiltera").value = prethodna;
+    }
+
+    function prikaziFiltriraniRaspored() {
+        const tip = byId("rasporedTipFiltera").value;
+        const vrednost = byId("rasporedVrednostFiltera").value;
+        let termini = state.mojPregled.termini.filter(x => !vrednost || (tip === "grupa" ? x.grupa : x.ucenik) === vrednost);
+        if (tip === "grupa") {
+            termini = [...new Map(termini.map(x => [x.terminId, x])).values()];
+        }
+        const aktivni = termini.filter(x => x.status === "ZAKAZAN").slice(0, 10);
+        byId("brojAktivnihTermina").textContent = termini.filter(x => x.status === "ZAKAZAN").length;
+        byId("brojOdrzanihTermina").textContent = termini.filter(x => x.status === "ODRZAN").length;
+        byId("brojOtkazanihTermina").textContent = termini.filter(x => x.status === "OTKAZAN").length;
+        byId("mojiTerminiTabela").innerHTML = table(
+            tip === "grupa"
+                ? ["Grupa", "Profesor", "Jezik", "Nivo", "Pocetak", "Zavrsetak"]
+                : ["Ucenik", "Grupa", "Profesor", "Jezik", "Nivo", "Pocetak", "Zavrsetak"],
+            aktivni.map(x => tip === "grupa"
+                ? `<tr><td>${esc(x.grupa)}</td><td>${esc(x.profesor)}</td><td>${x.jezik}</td><td>${x.nivo}</td><td>${x.vremeOd.replace("T", " ")}</td><td>${x.vremeDo.replace("T", " ")}</td></tr>`
+                : `<tr><td>${esc(x.ucenik)}</td><td>${esc(x.grupa)}</td><td>${esc(x.profesor)}</td><td>${x.jezik}</td><td>${x.nivo}</td><td>${x.vremeOd.replace("T", " ")}</td><td>${x.vremeDo.replace("T", " ")}</td></tr>`)
+        );
+    }
+
+    function prikaziUcenickiDeo(id, dugme) {
+        document.querySelectorAll(".student-view").forEach(x => x.hidden = x.id !== id);
+        byId("studentTabs").querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === dugme));
+    }
+
+    async function otvoriMojNalog() {
+        if (!state.profesor) return;
+        try {
+            const nalog = await api("/api/moj-nalog");
+            byId("mainTabs").classList.add("role-hidden");
+            byId("studentTabs").hidden = true;
+            byId("metrics").classList.add("role-hidden");
+            document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+            byId("mojPregled").hidden = true;
+            byId("adminPodsetnici").hidden = true;
+            byId("mojNalogPanel").hidden = false;
+            byId("mojNalogPodaci").innerHTML = `
+                <div><span>Korisnicko ime</span><strong>${esc(nalog.korisnickoIme)}</strong></div>
+                <div><span>Ime i prezime</span><strong>${esc(nalog.ime)} ${esc(nalog.prezime)}</strong></div>
+                <div><span>Uloga</span><strong>${esc(nalog.uloga)}</strong></div>
+                <div><span>Kontakt</span><strong>${esc(nalog.kontakt ?? "-")}</strong></div>
+                <div><span>Aktivan od</span><strong>${nalog.aktivanOd ?? "-"}</strong></div>`;
+            byId("kontaktForm").hidden = !nalog.mozeUreditiKontakt;
+            byId("mojKontakt").value = nalog.kontakt ?? "";
+            byId("mojiKurseviNalog").hidden = true;
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    function zatvoriMojNalog() {
+        primeniPrikazUloge();
+        if (state.ucenik) prikaziUcenickiDeo("studentTermini", byId("studentTabs").querySelector(".tab"));
+    }
+
+    function postaviKursIzGrupe() {
+        const grupa = state.grupe.find(x => x.id === Number(byId("upGrupa").value));
+        byId("upKurs").innerHTML = grupa
+            ? `<option value="${grupa.kursId}">${esc(nameOf(state.kursevi, grupa.kursId, k => `${k.jezik} ${k.nivo} - ${k.tip}`))}</option>`
+            : '<option value="">Prvo izaberite grupu</option>';
+    }
+
+    function postaviTerminIzGrupe() {
+        const grupa = state.grupe.find(x => x.id === Number(byId("tGrupa").value));
+        byId("tProfesor").innerHTML = grupa
+            ? `<option value="${grupa.profesorId}">${state.profesor ? "Moj nalog" : esc(nameOf(state.profesori, grupa.profesorId, p => `${p.ime} ${p.prezime}`))}</option>`
+            : '<option value="">Prvo izaberite grupu</option>';
+        byId("tKurs").innerHTML = grupa
+            ? `<option value="${grupa.kursId}">${esc(nameOf(state.kursevi, grupa.kursId, k => `${k.jezik} ${k.nivo} - ${k.tip}`))}</option>`
+            : '<option value="">Prvo izaberite grupu</option>';
+    }
+
+    function profesorPredajeKurs(profesor, kurs) {
+        return profesor && kurs && profesor.jezici.includes(kurs.jezik) && profesor.nivoi.includes(kurs.nivo);
+    }
+
+    function kurseviIzabranogTipa(kursevi) {
+        return kursevi.filter(kurs => kurs.tip === byId("gTip").value);
+    }
+
+    function nazivKursaZaIzbor(kurs) {
+        return `${kurs.jezik} ${kurs.nivo}`;
+    }
+
+    function postaviKurseveGrupe(kursevi, zeljeniKursId = null) {
+        const postojiZeljeniKurs = kursevi.some(kurs => kurs.id === Number(zeljeniKursId));
+        const pocetnaOpcija = kursevi.length
+            ? '<option value="">Izaberite konkretan kurs</option>'
+            : '<option value="">Nema kurseva koji odgovaraju profesoru i tipu nastave</option>';
+        byId("gKurs").innerHTML = pocetnaOpcija
+            + kursevi.map(kurs => `<option value="${kurs.id}">${esc(nazivKursaZaIzbor(kurs))}</option>`).join("");
+        byId("gKurs").disabled = !kursevi.length;
+        byId("gKurs").value = postojiZeljeniKurs ? String(zeljeniKursId) : "";
+    }
+
+    function pripremiIzborGrupe(zeljeniProfesorId = null, zeljeniKursId = null) {
+        if (state.profesor) {
+            byId("gRedosled").value = "profesor";
+            byId("gRedosled").disabled = true;
+            byId("gProfesor").innerHTML = `<option value="${state.korisnik.povezaniId}">${esc(state.korisnik.prikaznoIme)}</option>`;
+            byId("gProfesor").disabled = true;
+            postaviKurseveGrupe(kurseviIzabranogTipa(state.kursevi), zeljeniKursId);
+            pripremiUcenikeZaGrupu();
+            return;
+        }
+        byId("gRedosled").disabled = false;
+        byId("gProfesor").disabled = false;
+        if (byId("gRedosled").value === "kurs") {
+            postaviKurseveGrupe(kurseviIzabranogTipa(state.kursevi), zeljeniKursId);
+            const kurs = state.kursevi.find(x => x.id === Number(byId("gKurs").value));
+            const odgovarajuciProfesori = state.profesori.filter(profesor => profesorPredajeKurs(profesor, kurs));
+            byId("gProfesor").innerHTML = kurs
+                ? optionList(odgovarajuciProfesori, x => `${x.ime} ${x.prezime}`)
+                : '<option value="">Prvo izaberite kurs</option>';
+            byId("gProfesor").disabled = !kurs;
+            if (zeljeniProfesorId && odgovarajuciProfesori.some(x => x.id === Number(zeljeniProfesorId))) byId("gProfesor").value = zeljeniProfesorId;
+            pripremiUcenikeZaGrupu();
+            return;
+        }
+        byId("gProfesor").innerHTML = optionList(state.profesori, x => `${x.ime} ${x.prezime}`);
+        if (zeljeniProfesorId) byId("gProfesor").value = zeljeniProfesorId;
+        const profesor = state.profesori.find(x => x.id === Number(byId("gProfesor").value));
+        const odgovarajuciKursevi = kurseviIzabranogTipa(state.kursevi.filter(kurs => profesorPredajeKurs(profesor, kurs)));
+        postaviKurseveGrupe(odgovarajuciKursevi, zeljeniKursId);
+        pripremiUcenikeZaGrupu();
+    }
+
+    function uskladiIzborGrupe(izmenjenoPolje) {
+        if (state.profesor) return;
+        if (byId("gRedosled").value !== izmenjenoPolje) return;
+        if (byId("gRedosled").value === "kurs") {
+            pripremiIzborGrupe(null, byId("gKurs").value);
+        } else {
+            pripremiIzborGrupe(byId("gProfesor").value, null);
+        }
+    }
+
+    function pripremiUcenikeZaGrupu() {
+        const kurs = state.kursevi.find(x => x.id === Number(byId("gKurs").value));
+        const kapacitet = byId("gTip").value === "INDIVIDUALNI" ? 1 : 5;
+        if (state.grupaUcenikIds.length > kapacitet) state.grupaUcenikIds = state.grupaUcenikIds.slice(0, kapacitet);
+        byId("gUceniciLabel").textContent = byId("gTip").value === "INDIVIDUALNI"
+            ? "Ucenik individualnog casa (tacno jedan)"
+            : `Ucenici grupe (najvise ${kapacitet})`;
+        prikaziUcenikeGrupe();
+    }
+
+    function izabraniUceniciGrupe() {
+        return [...state.grupaUcenikIds];
+    }
+
+    function prikaziUcenikeGrupe() {
+        const dostupni = state.ucenici.filter(x => !state.grupaUcenikIds.includes(x.id));
+        byId("gUcenikIzbor").innerHTML = optionList(dostupni, x => `${x.ime} ${x.prezime}`);
+        const kapacitet = byId("gTip").value === "INDIVIDUALNI" ? 1 : 5;
+        byId("gUcenikIzbor").disabled = state.grupaUcenikIds.length >= kapacitet;
+        byId("gDodajUcenika").disabled = state.grupaUcenikIds.length >= kapacitet;
+        byId("gUcenici").innerHTML = state.grupaUcenikIds.length
+            ? state.grupaUcenikIds.map(id => `<span class="member-chip">${esc(nameOf(state.ucenici, id, x => `${x.ime} ${x.prezime}`))}<button type="button" title="Ukloni ucenika" aria-label="Ukloni ucenika" onclick="ukloniUcenikaIzForme(${id})">x</button></span>`).join("")
+            : '<span class="empty">Grupa trenutno nema izabranih ucenika.</span>';
+    }
+
+    function dodajIzabranogUcenikaUFormu() {
+        const kapacitet = byId("gTip").value === "INDIVIDUALNI" ? 1 : 5;
+        const ucenikId = Number(byId("gUcenikIzbor").value);
+        if (!ucenikId) return;
+        if (state.grupaUcenikIds.length >= kapacitet) {
+            notify(`Za izabrani kurs mozete odabrati najvise ${kapacitet} ucenika.`, "error");
+            return;
+        }
+        if (!state.grupaUcenikIds.includes(ucenikId)) state.grupaUcenikIds.push(ucenikId);
+        prikaziUcenikeGrupe();
+    }
+
+    function ukloniUcenikaIzForme(ucenikId) {
+        state.grupaUcenikIds = state.grupaUcenikIds.filter(id => id !== ucenikId);
+        prikaziUcenikeGrupe();
+    }
+
+    async function loadSedmicniPregled() {
+        try {
+            const pregled = await api(`/api/termini/sedmicni-pregled?datum=${byId("sedmicaDatum").value}`);
+            byId("sedmicniPregledTabela").innerHTML = table(
+                ["Profesor", "Odrzani", "Otkazani", "Jos zakazani"],
+                pregled.map(x => `<tr><td>${esc(x.profesor)}</td><td>${x.odrzaniCasovi}</td><td>${x.otkazaniCasovi}</td><td>${x.zakazaniCasovi}</td></tr>`)
+            );
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function loadPodsetnike() {
+        const podsetnici = await api("/api/podsetnici");
+        byId("podsetniciPeriod").textContent = `Neizmirene obaveze za ${podsetnici.mesec}/${podsetnici.godina}.`;
+        byId("neplaceneSkolarine").innerHTML = podsetnici.neplaceneSkolarine.length
+            ? `<ul>${podsetnici.neplaceneSkolarine.map(x =>
+                `<li><strong>${esc(x.ucenik)}</strong> - ${x.mesec}/${x.godina}, ${esc(x.kurs)}, grupa: ${esc(x.grupa)}</li>`).join("")}</ul>`
+            : '<span class="reminder-empty">Svi ucenici su izmirili obaveze.</span>';
+        byId("neisplaceniProfesori").innerHTML = podsetnici.neisplaceniProfesori.length
+            ? `<ul>${podsetnici.neisplaceniProfesori.map(x =>
+                `<li><strong>${esc(x.profesor)}</strong> - nije isplacen za ${x.mesec}/${x.godina}</li>`).join("")}</ul>`
+            : '<span class="reminder-empty">Svi profesori su isplaceni.</span>';
+    }
+
+    async function loadUplate() {
+        const upisId = byId("ulUpis").value;
+        if (!upisId) { byId("uplateTabela").innerHTML = '<div class="empty">Nema upisa za prikaz uplata.</div>'; return; }
+        try {
+            const uplate = await api(`/api/uplate?upisId=${upisId}`);
+            byId("uplateTabela").innerHTML = table(["ID", "Mesec/godina", "Iznos", "Datum", "Status", "Akcija"], uplate.map(x =>
+                `<tr><td>${x.id}</td><td>${x.mesec}/${x.godina}</td><td>${x.iznos}</td><td>${x.datumUplate}</td><td><span class="status">${x.status}</span></td><td><button class="action-btn" onclick="urediUplatu(${x.id}, ${Number(upisId)}, ${x.mesec}, ${x.godina}, ${x.iznos}, '${x.datumUplate}')">Uredi</button></td></tr>`));
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    function pripremiIzborUplate(zeljeniUcenikId = null, zeljeniUpisId = null) {
+        const prethodniUcenikId = zeljeniUcenikId ?? Number(byId("ulUcenik").value);
+        const prethodniUpisId = zeljeniUpisId ?? Number(byId("ulUpis").value);
+        const uceniciSaUpisom = state.ucenici.filter(ucenik =>
+            state.upisi.some(upis => upis.ucenikId === ucenik.id)
+        );
+
+        byId("ulUcenik").innerHTML = optionList(uceniciSaUpisom, ucenik => `${ucenik.ime} ${ucenik.prezime}`);
+        if (uceniciSaUpisom.some(ucenik => ucenik.id === Number(prethodniUcenikId))) {
+            byId("ulUcenik").value = prethodniUcenikId;
+        }
+
+        const ucenikId = Number(byId("ulUcenik").value);
+        const upisiUcenika = state.upisi.filter(upis => upis.ucenikId === ucenikId);
+        byId("ulUpis").innerHTML = optionList(upisiUcenika, upis => {
+            const kurs = nameOf(state.kursevi, upis.kursId, k => `${k.jezik} ${k.nivo} - ${k.tip}`);
+            return `${kurs} / upis ${upis.id} / ${upis.status}`;
+        });
+        if (upisiUcenika.some(upis => upis.id === Number(prethodniUpisId))) {
+            byId("ulUpis").value = prethodniUpisId;
+        }
+    }
+
+    async function loadUcenikUplate(ucenikId) {
+        state.izabraniUcenikId = ucenikId;
+        const ucenik = state.ucenici.find(x => x.id === ucenikId);
+        byId("ucenikUplateNaslov").textContent = ucenik
+            ? `Mesecne obaveze: ${ucenik.ime} ${ucenik.prezime}`
+            : "Mesecne obaveze ucenika";
+        try {
+            const obaveze = await api(`/api/uplate/ucenik/${ucenikId}/pregled`);
+            byId("ucenikUplateTabela").innerHTML = table(
+                ["Upis", "Kurs", "Mesec/godina", "Ocekivano", "Status", "Placeno", "Datum uplate"],
+                obaveze.map(x => `<tr>
+                    <td>${x.upisId}</td>
+                    <td>${x.jezik} ${x.nivo}</td>
+                    <td>${x.mesec}/${x.godina}</td>
+                    <td>${x.ocekivaniIznos}</td>
+                    <td><span class="status ${x.placeno ? "" : "unpaid"}">${x.placeno ? "UPLACENO" : "NIJE UPLACENO"}</span></td>
+                    <td>${x.placeniIznos ?? "-"}</td>
+                    <td>${x.datumUplate ?? "-"}</td>
+                </tr>`)
+            );
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function loadIsplate() {
+        const profesorId = byId("isProfesor").value;
+        if (!profesorId) { byId("isplateTabela").innerHTML = '<div class="empty">Nema profesora za prikaz isplata.</div>'; return; }
+        try {
+            const isplate = await api(`/api/isplate?profesorId=${profesorId}`);
+            byId("isplateTabela").innerHTML = table(["ID", "Mesec/godina", "Iznos", "Datum", "Status", "Akcija"], isplate.map(x =>
+                `<tr><td>${x.id}</td><td>${x.mesec}/${x.godina}</td><td>${x.iznos}</td><td>${x.datumIsplate}</td><td><span class="status">${x.status}</span></td><td><button class="action-btn" onclick="urediIsplatu(${x.id}, ${x.profesorId}, ${x.mesec}, ${x.godina}, ${x.iznos}, '${x.datumIsplate}')">Uredi</button></td></tr>`));
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function loadProfesorIsplate(profesorId) {
+        state.izabraniProfesorId = profesorId;
+        const profesor = state.profesori.find(x => x.id === profesorId);
+        byId("profesorIsplateNaslov").textContent = profesor
+            ? `Mesecne isplate: ${profesor.ime} ${profesor.prezime}`
+            : "Mesecne isplate profesora";
+        try {
+            const obaveze = await api(`/api/isplate/profesor/${profesorId}/pregled`);
+            byId("profesorIsplateTabela").innerHTML = table(
+                ["Mesec/godina", "Isplaceni iznos", "Datum isplate"],
+                obaveze.filter(x => x.isplaceno).map(x => `<tr>
+                    <td>${x.mesec}/${x.godina}</td>
+                    <td>${x.isplaceniIznos}</td>
+                    <td>${x.datumIsplate}</td>
+                </tr>`)
+            );
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    const forme = {
+        ucenik: { id: "ucenikForm", naslov: "Registracija ucenika", izmena: "Uredjivanje ucenika", dugme: "Sacuvaj ucenika" },
+        profesor: { id: "profesorForm", naslov: "Evidentiranje profesora", izmena: "Uredjivanje profesora", dugme: "Sacuvaj profesora" },
+        kurs: { id: "kursForm", naslov: "Kreiranje kursa", izmena: "Uredjivanje kursa", dugme: "Sacuvaj kurs" },
+        grupa: { id: "grupaForm", naslov: "Kreiranje nastavne grupe", izmena: "Uredjivanje nastavne grupe", dugme: "Sacuvaj grupu" },
+        upis: { id: "upisForm", naslov: "Dodavanje ucenika u grupu", izmena: "Uredjivanje upisa", dugme: "Dodaj" },
+        termin: { id: "terminForm", naslov: "Zakazivanje termina", izmena: "Uredjivanje termina", dugme: "Zakazi termin" },
+        uplata: { id: "uplataForm", naslov: "Evidentiranje uplate", izmena: "Uredjivanje uplate", dugme: "Evidentiraj uplatu" },
+        isplata: { id: "isplataForm", naslov: "Evidentiranje isplate profesoru", izmena: "Uredjivanje isplate profesoru", dugme: "Evidentiraj isplatu" }
+    };
+
+    function zapocniIzmenu(tip, id) {
+        if (state.izmena && state.izmena.tip !== tip) {
+            otkaziIzmenu(state.izmena.tip);
+        }
+        state.izmena = { tip, id };
+        const form = byId(forme[tip].id);
+        form.querySelector(".box-title").textContent = forme[tip].izmena;
+        form.querySelector(".primary-btn").textContent = "Sacuvaj izmene";
+        form.querySelector(".secondary-btn").classList.add("show");
+        form.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function otkaziIzmenu(tip) {
+        const form = byId(forme[tip].id);
+        state.izmena = null;
+        if (tip === "grupa") state.grupaUcenikIds = [];
+        form.reset();
+        form.querySelector(".box-title").textContent = forme[tip].naslov;
+        form.querySelector(".primary-btn").textContent = forme[tip].dugme;
+        form.querySelector(".secondary-btn").classList.remove("show");
+        postaviPocetneDatume();
+        render();
+    }
+
+    function urediUcenika(id) {
+        const x = state.ucenici.find(item => item.id === id);
+        zapocniIzmenu("ucenik", id);
+        byId("uIme").value = x.ime; byId("uPrezime").value = x.prezime; byId("uKontakt").value = x.kontakt; byId("uDatum").value = x.datumUpisa;
+    }
+
+    function urediProfesora(id) {
+        const x = state.profesori.find(item => item.id === id);
+        zapocniIzmenu("profesor", id);
+        byId("pIme").value = x.ime; byId("pPrezime").value = x.prezime; byId("pLicenca").value = x.brojLicence;
+        byId("pDatum").value = x.datumAngazovanja; byId("pNaknada").value = x.mesecnaNaknada;
+        byId("pJezici").querySelectorAll("input").forEach(input => input.checked = x.jezici.includes(input.value));
+        byId("pNivoi").querySelectorAll("input").forEach(input => input.checked = x.nivoi.includes(input.value));
+    }
+
+    function urediKurs(id) {
+        const x = state.kursevi.find(item => item.id === id);
+        zapocniIzmenu("kurs", id);
+        byId("kJezik").value = x.jezik; byId("kNivo").value = x.nivo; byId("kTip").value = x.tip; byId("kCena").value = x.cenaMesecno;
+    }
+
+    function urediUpis(id) {
+        const x = state.upisi.find(item => item.id === id);
+        zapocniIzmenu("upis", id);
+        byId("upUcenik").value = x.ucenikId; byId("upGrupa").value = x.grupaId; postaviKursIzGrupe(); byId("upDatum").value = x.datumPocetka;
+    }
+
+    function urediGrupu(id) {
+        const x = state.grupe.find(item => item.id === id);
+        zapocniIzmenu("grupa", id);
+        byId("gNaziv").value = x.naziv;
+        byId("gRedosled").value = "profesor";
+        byId("gTip").value = state.kursevi.find(kurs => kurs.id === x.kursId)?.tip ?? "GRUPNI";
+        state.grupaUcenikIds = state.upisi
+            .filter(upis => upis.grupaId === id && upis.status === "AKTIVAN")
+            .map(upis => upis.ucenikId);
+        pripremiIzborGrupe(x.profesorId, x.kursId);
+    }
+
+    function dodajUcenikaUGrupu(id) {
+        urediGrupu(id);
+    }
+
+    function otvoriKreiranjeGrupe() {
+        document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x.dataset.panel === "grupe"));
+        document.querySelectorAll(".panel").forEach(x => x.classList.toggle("active", x.id === "grupe"));
+        byId("grupaForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function odjaviSe() {
+        try {
+            await api("/api/tab-session", { method: "DELETE" });
+        } catch (_) {
+        } finally {
+            sessionStorage.removeItem("tabToken");
+            window.location.replace("/prijava.html");
+        }
+    }
+
+    function urediTermin(id) {
+        const x = state.termini.find(item => item.id === id);
+        zapocniIzmenu("termin", id);
+        byId("tGrupa").value = x.grupaId; postaviTerminIzGrupe();
+        byId("tOd").value = x.vremeOd.slice(0, 16); byId("tDo").value = x.vremeDo.slice(0, 16);
+    }
+
+    function urediUplatu(id, upisId, mesec, godina, iznos, datum) {
+        zapocniIzmenu("uplata", id);
+        const upis = state.upisi.find(x => x.id === upisId);
+        pripremiIzborUplate(upis?.ucenikId, upisId);
+        byId("ulMesec").value = mesec; byId("ulGodina").value = godina;
+        byId("ulIznos").value = iznos; byId("ulDatum").value = datum;
+    }
+
+    function urediIsplatu(id, profesorId, mesec, godina, iznos, datum) {
+        zapocniIzmenu("isplata", id);
+        byId("isProfesor").value = profesorId; byId("isMesec").value = mesec; byId("isGodina").value = godina;
+        byId("isIznos").value = iznos; byId("isDatum").value = datum;
+    }
+
+    async function submit(tip, path, body, message) {
+        try {
+            const izmena = state.izmena?.tip === tip ? state.izmena : null;
+            const rezultat = await api(izmena ? `${path}/${izmena.id}` : path, { method: izmena ? "PUT" : "POST", body: JSON.stringify(body) });
+            notify(izmena ? "Izmene su sacuvane." : message);
+            if (!izmena && rezultat?.nalog) prikaziPocetneKredencijale(rezultat.nalog);
+            if (!izmena && tip === "grupa") state.grupaUcenikIds = [];
+            if (izmena) otkaziIzmenu(tip);
+            await loadAll();
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function otkaziTermin(id) {
+        try {
+            await api(`/api/termini/${id}/otkazi`, { method: "PUT" });
+            notify("Termin je otkazan.");
+            await loadAll();
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    async function odrziTermin(id) {
+        try {
+            await api(`/api/termini/${id}/odrzi`, { method: "PUT" });
+            notify("Termin je oznacen kao odrzan.");
+            await loadAll();
+        } catch (error) { notify(error.message, "error"); }
+    }
+
+    function prikaziPocetneKredencijale(nalog) {
+        const box = byId("credentialsNotice");
+        box.innerHTML = `
+            <strong>Pocetni podaci za prijavu - nalog je odmah aktivan</strong>
+            Korisnicko ime: <b>${esc(nalog.korisnickoIme)}</b><br>
+            Privremena lozinka: <b>${esc(nalog.pocetnaLozinka)}</b>
+            <p>Privremena lozinka se prikazuje samo sada. Predajte je korisniku pre zatvaranja ove poruke. U bazi se cuva samo njen hash, a nakon promene lozinke administrator nema pristup novoj lozinci.</p>
+            <div class="credentials-actions">
+                <a href="/prijava.html" target="_blank" rel="noopener">Otvori prijavu u novoj kartici</a>
+                <button type="button" onclick="zatvoriPocetneKredencijale()">Predala/o sam podatke - zatvori</button>
+            </div>`;
+        box.hidden = false;
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function zatvoriPocetneKredencijale() {
+        const box = byId("credentialsNotice");
+        box.hidden = true;
+        box.replaceChildren();
+    }
+
+    function checkedValues(container) {
+        return [...container.querySelectorAll("input:checked")].map(x => x.value);
+    }
+
+    document.querySelectorAll(".tab[data-panel]").forEach(tab => tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === tab));
+        document.querySelectorAll(".panel").forEach(x => x.classList.toggle("active", x.id === tab.dataset.panel));
+    }));
+
+    byId("ucenikForm").addEventListener("submit", e => { e.preventDefault(); submit("ucenik", "/api/ucenici", { ime: byId("uIme").value, prezime: byId("uPrezime").value, kontakt: byId("uKontakt").value, datumUpisa: byId("uDatum").value }, "Ucenik je sacuvan."); });
+    byId("profesorForm").addEventListener("submit", e => { e.preventDefault(); submit("profesor", "/api/profesori", { ime: byId("pIme").value, prezime: byId("pPrezime").value, brojLicence: byId("pLicenca").value, datumAngazovanja: byId("pDatum").value, mesecnaNaknada: Number(byId("pNaknada").value), jezici: checkedValues(byId("pJezici")), nivoi: checkedValues(byId("pNivoi")) }, "Profesor je sacuvan."); });
+    byId("kursForm").addEventListener("submit", e => { e.preventDefault(); submit("kurs", "/api/kursevi", { jezik: byId("kJezik").value, nivo: byId("kNivo").value, tip: byId("kTip").value, cenaMesecno: Number(byId("kCena").value) }, "Kurs je sacuvan."); });
+    byId("upisForm").addEventListener("submit", e => { e.preventDefault(); submit("upis", "/api/upisi", { ucenikId: Number(byId("upUcenik").value), kursId: Number(byId("upKurs").value), grupaId: Number(byId("upGrupa").value), datumPocetka: byId("upDatum").value }, "Ucenik je dodat u grupu."); });
+    byId("grupaForm").addEventListener("submit", e => {
+        e.preventDefault();
+        const ucenikIds = izabraniUceniciGrupe();
+        if (!Number(byId("gKurs").value)) {
+            notify(`Izaberite konkretan ${byId("gTip").value === "INDIVIDUALNI" ? "individualni" : "grupni"} kurs koji izabrani profesor predaje.`, "error");
+            return;
+        }
+        if (!ucenikIds.length) {
+            notify("Izaberite najmanje jednog ucenika.", "error");
+            return;
+        }
+        submit("grupa", "/api/grupe", { naziv: byId("gNaziv").value, profesorId: Number(byId("gProfesor").value), kursId: Number(byId("gKurs").value), ucenikIds }, "Grupa je sacuvana.");
+    });
+    byId("terminForm").addEventListener("submit", e => { e.preventDefault(); submit("termin", "/api/termini", { profesorId: Number(byId("tProfesor").value), kursId: Number(byId("tKurs").value), grupaId: Number(byId("tGrupa").value), vremeOd: byId("tOd").value, vremeDo: byId("tDo").value }, "Termin je zakazan."); });
+    byId("uplataForm").addEventListener("submit", e => { e.preventDefault(); submit("uplata", "/api/uplate", { upisId: Number(byId("ulUpis").value), mesec: Number(byId("ulMesec").value), godina: Number(byId("ulGodina").value), iznos: Number(byId("ulIznos").value), datumUplate: byId("ulDatum").value }, "Uplata je evidentirana."); });
+    byId("isplataForm").addEventListener("submit", e => { e.preventDefault(); submit("isplata", "/api/isplate", { profesorId: Number(byId("isProfesor").value), mesec: Number(byId("isMesec").value), godina: Number(byId("isGodina").value), iznos: Number(byId("isIznos").value), datumIsplate: byId("isDatum").value }, "Isplata profesoru je evidentirana."); });
+    byId("ulUcenik").addEventListener("change", () => {
+        pripremiIzborUplate(Number(byId("ulUcenik").value), null);
+        loadUplate();
+    });
+    byId("ulUpis").addEventListener("change", loadUplate);
+    byId("isProfesor").addEventListener("change", loadIsplate);
+    byId("sedmicaDatum").addEventListener("change", loadSedmicniPregled);
+    byId("upGrupa").addEventListener("change", postaviKursIzGrupe);
+    byId("tGrupa").addEventListener("change", postaviTerminIzGrupe);
+    byId("gRedosled").addEventListener("change", () => pripremiIzborGrupe());
+    byId("gTip").addEventListener("change", () => {
+        state.grupaUcenikIds = [];
+        pripremiIzborGrupe();
+    });
+    byId("gProfesor").addEventListener("change", () => uskladiIzborGrupe("profesor"));
+    byId("gKurs").addEventListener("change", () => uskladiIzborGrupe("kurs"));
+    byId("rasporedTipFiltera").addEventListener("change", () => { pripremiFilterRasporeda(); prikaziFiltriraniRaspored(); });
+    byId("rasporedVrednostFiltera").addEventListener("change", prikaziFiltriraniRaspored);
+    byId("kontaktForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        try {
+            await api("/api/moj-nalog/kontakt", { method: "PUT", body: JSON.stringify({ kontakt: byId("mojKontakt").value }) });
+            notify("Kontakt je sacuvan."); await loadAll(); await otvoriMojNalog();
+        } catch (error) { notify(error.message, "error"); }
+    });
+    byId("lozinkaForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        try {
+            await api("/api/auth/lozinka", { method: "PUT", body: JSON.stringify({
+                trenutnaLozinka: byId("trenutnaLozinka").value,
+                novaLozinka: byId("novaLozinka").value
+            }) });
+            e.target.reset();
+            notify("Lozinka je promenjena. Nova lozinka nije dostupna administratoru.");
+            await loadKorisnika();
+        } catch (error) { notify(error.message, "error"); }
+    });
+
+    byId("pJezici").innerHTML = JEZICI.map(x => `<label><input type="checkbox" value="${x}">${x}</label>`).join("");
+    byId("pNivoi").innerHTML = NIVOI.map(x => `<label><input type="checkbox" value="${x}">${x}</label>`).join("");
+    byId("kJezik").innerHTML = JEZICI.map(x => `<option>${x}</option>`).join("");
+    byId("kNivo").innerHTML = NIVOI.map(x => `<option>${x}</option>`).join("");
+    function postaviPocetneDatume() {
+        ["uDatum", "upDatum", "ulDatum", "pDatum", "isDatum"].forEach(id => byId(id).value = today());
+        byId("ulMesec").value = new Date().getMonth() + 1;
+        byId("ulGodina").value = new Date().getFullYear();
+        byId("isMesec").value = new Date().getMonth() + 1;
+        byId("isGodina").value = new Date().getFullYear();
+        byId("sedmicaDatum").value = today();
+    }
+    postaviPocetneDatume();
+
+    async function init() {
+        if (!sessionStorage.getItem("tabToken")) {
+            window.location.replace("/prijava.html");
+            return;
+        }
+        try {
+            await loadKorisnika();
+            await loadAll();
+        } catch (error) {
+            notify(error.message, "error");
+        }
+    }
+    init();
+    setInterval(() => {
+        if (!state.izmena && !document.activeElement?.closest("form")) loadAll();
+    }, 15000);
+</script>
+</body>
+</html>
