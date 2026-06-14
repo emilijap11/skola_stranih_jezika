@@ -53,13 +53,9 @@ Sve ove tehnologije nisu deo poslovne logike skole, vec predstavljaju automatiza
 Pokretanje aplikacije
 Za lokalno pokretanje potrebni su JDK 17, Maven, Git i internet browser. Projekat je konfigurisan za JDK 17 i GitHub Actions ga takodje proverava na JDK 17. Na MacBook racunaru na kome je projekat razvijan Maven trenutno koristi JDK 25, dok komanda java -version prikazuje JDK 23. Zbog toga JaCoCo 0.8.12 pri lokalnom pokretanju komande mvn verify moze da ispise upozorenje za jednu Java 25 sistemsku klasu. Izgradnja se ipak zavrsava i JaCoCo izvestaj se pravi, ali se za potpuno cistu proveru preporucuje da Maven koristi JDK 17. Java verzija koju Maven stvarno koristi proverava se komandom mvn -version.
 
-
 Administrator se lokalno prijavljuje korisnickim imenom admin i lozinkom admin123. Profesorski nalozi za pocetnu proveru su profesor1 i profesor2, a oba koriste lozinku profesor123. Zajednicki ucenicki nalog koristi korisnicko ime ucenik i lozinku ucenik123. Kada se registruje novi profesor, njegov nalog se automatski kreira, a pocetna lozinka se samo jednom prikazuje osobi koja je izvrsila registraciju.
 
 Lokalna H2 baza cuva se u fajlu skola-jezika-data.mv.db, pa podaci ostaju sacuvani i nakon ponovnog pokretanja aplikacije. H2 konzola je dostupna dok aplikacija radi .Vazno je da JDBC URL bude napisan potpuno isto kao u application.properties fajlu.
 
-Pored osnovne lokalne konfiguracije postoje razvojni, testni, produkcioni i Azure profil. Razvojni profil prikazuje vise podataka korisnih tokom razvoja, testni koristi privremenu bazu za automatske testove, produkcioni skriva H2 konzolu i detaljne greske, dok Azure profil priprema aplikaciju za Azure okruzenje
-
 Kada se proverava da li su svi delovi povezani, administrator moze biti prijavljen u jednoj kartici, profesor u drugoj, a zajednicki ucenicki nalog u trecoj. Profesor zatim moze da napravi ili uredi svoju grupu, doda ucenika i zakaze termin. Isti termin treba da bude vidljiv administratoru, profesoru i ucenickom rasporedu. Ako profesor otkaze termin, promena se odmah cuva u bazi i prikazuje na svim povezanim pregledima.
 
-Projekat je namerno ostavljen kao jedna Spring Boot aplikacija sa jednostavnim HTML, CSS i JavaScript frontendom. Nisu dodavani mikroservisi, dodatni frontend framework, spoljna baza ili drugi alati koji nisu potrebni za temu. Slojevita organizacija, poslovne validacije i prijava po browser kartici zadrzane su zato sto direktno podrzavaju zahteve aplikacije i obrasce koji su korisceni na predavanjima.
