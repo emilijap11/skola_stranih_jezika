@@ -14,13 +14,9 @@
         input { width: 100%; min-height: 42px; border: 1px solid #bac4d1; border-radius: 4px; padding: 9px 10px; font: inherit; }
         button { width: 100%; margin-top: 18px; border: 0; border-radius: 5px; padding: 11px; color: white; background: #1f5a7a; font: inherit; font-weight: 600; cursor: pointer; }
         .error { min-height: 20px; margin-top: 14px; color: #a43d3d; font-size: 13px; }
-        .project-info { margin-top: 18px; border-top: 1px solid #d8dee8; padding-top: 16px; }
-        .project-info h2 { margin: 0 0 8px; font-size: 15px; }
-        .project-info p { margin-bottom: 10px; font-size: 13px; }
-        .info-group { margin-top: 10px; }
-        .info-group strong { display: block; margin-bottom: 5px; color: #344054; font-size: 12px; text-transform: uppercase; }
-        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-        .chip { border: 1px solid #c8d5df; border-radius: 4px; padding: 4px 7px; background: #f2f7fa; color: #1f5a7a; font-size: 12px; font-weight: 600; }
+        .project-info { margin-top: 16px; border-top: 1px solid #d8dee8; padding-top: 12px; }
+        .project-info summary { color: #1f5a7a; cursor: pointer; font-size: 13px; font-weight: 700; }
+        .project-info p { margin: 8px 0 0; font-size: 13px; line-height: 1.45; }
     </style>
 </head>
 <body>
@@ -69,16 +65,10 @@
             const projekat = await response.json();
             const blok = document.getElementById("oProjektu");
             blok.innerHTML = `
-                <h2>O projektu</h2>
-                <p>${projekat.opis}</p>
-                <div class="info-group">
-                    <strong>Tehnologije</strong>
-                    <div class="chips">${projekat.tehnologije.map(stavka => `<span class="chip">${stavka}</span>`).join("")}</div>
-                </div>
-                <div class="info-group">
-                    <strong>Automatizacija</strong>
-                    <div class="chips">${projekat.automatizacija.map(stavka => `<span class="chip">${stavka}</span>`).join("")}</div>
-                </div>
+                <details>
+                    <summary>O projektu</summary>
+                    <p>${projekat.opis} Projekat je uradjen kao Java Spring Boot aplikacija sa bazom, testovima i GitHub Actions proverama.</p>
+                </details>
             `;
             blok.hidden = false;
         } catch (error) {
