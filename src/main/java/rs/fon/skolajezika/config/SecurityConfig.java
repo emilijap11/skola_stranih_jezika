@@ -23,7 +23,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/prijava.html", "/favicon.ico", "/api/tab-session/login").permitAll()
+                        .requestMatchers("/", "/index.html", "/prijava.html", "/favicon.ico", "/api/o-projektu",
+                                "/api/tab-session/login").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/tab-session").authenticated()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/auth/me").authenticated()
