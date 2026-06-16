@@ -51,11 +51,9 @@ class UcenikControllerTest {
                 .andExpect(jsonPath("$[0].ime").value("Ana"))
                 .andExpect(jsonPath("$[0].prezime").value("Markovic"));
     }
-
+    
     @Test
-
-    void pretrazujeUcenikePoImenuIliPrezimenu() throws Exception {
-
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void pretrazujeUcenikePoPojmu() throws Exception {
 
         Ucenik ucenik = new Ucenik("Petar", "Jovanovic", "petar@example.com", LocalDate.of(2026, 6, 1));
