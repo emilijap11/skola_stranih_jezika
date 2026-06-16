@@ -149,6 +149,8 @@
 
         .form-box { padding: 18px; }
         .table-box { overflow-x: auto; }
+        .table-filter { padding: 12px 17px; border-bottom: 1px solid var(--line); background: #fbfcfd; }
+        .table-filter label { margin: 0 0 5px; }
         .student-payments { margin-top: 18px; }
         .table-filter {
             display: grid;
@@ -586,7 +588,11 @@
 <script>
     const JEZICI = ["ENGLESKI", "NEMACKI", "FRANCUSKI", "SPANSKI", "ITALIJANSKI"];
     const NIVOI = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
     const state = { ucenici: [], prikazaniUcenici: [], profesori: [], prikazaniProfesori: [], kursevi: [], grupe: [], upisi: [], termini: [], grupaUcenikIds: [], mojPregled: null, izabraniUcenikId: null, izabraniProfesorId: null, izmena: null, korisnik: null, admin: false, profesor: false, ucenik: false };
+
+    const state = { ucenici: [], prikazaniUcenici: [], profesori: [], kursevi: [], grupe: [], upisi: [], termini: [], grupaUcenikIds: [], mojPregled: null, izabraniUcenikId: null, izabraniProfesorId: null, izmena: null, korisnik: null, admin: false, profesor: false, ucenik: false };
+
 
     const byId = id => document.getElementById(id);
     const today = () => new Date().toISOString().slice(0, 10);
@@ -635,15 +641,19 @@
         return pojam ? `/api/ucenici?pretraga=${encodeURIComponent(pojam)}` : "/api/ucenici";
     }
 
+
     function profesoriApiUrl() {
         const pojam = byId("profesorPretraga")?.value.trim();
         return pojam ? `/api/profesori?pretraga=${encodeURIComponent(pojam)}` : "/api/profesori";
     }
 
+
+
     function render() {
         const prikazaniUcenici = state.prikazaniUcenici.length || byId("ucenikPretraga")?.value.trim()
             ? state.prikazaniUcenici
             : state.ucenici;
+
         const prikazaniProfesori = state.prikazaniProfesori.length || byId("profesorPretraga")?.value.trim()
             ? state.prikazaniProfesori
             : state.profesori;
@@ -651,6 +661,7 @@
         const prikazaneGrupe = grupaPojam
             ? state.grupe.filter(grupa => grupa.naziv.toLowerCase().includes(grupaPojam))
             : state.grupe;
+
         const ucenikHeaders = state.admin
             ? ["ID", "Ime i prezime", "Kontakt", "Datum upisa", "Uplate", "Akcija"]
             : ["ID", "Ime i prezime", "Kontakt", "Datum upisa"];
@@ -702,14 +713,18 @@
                     api("/api/ucenici"), api("/api/kursevi"), api("/api/grupe"), api("/api/termini")
                 ]);
                 const upisi = await api("/api/upisi");
-                Object.assign(state, { ucenici, prikazaniUcenici: ucenici, kursevi, grupe, termini, upisi, profesori: [], prikazaniProfesori: [] });
+                Object.assign(state, { ucenici, prikazaniUcenici: ucenici, kursevi, grupe, termini, upisi, profesori: [] });
                 render();
                 return;
             }
             const [stats, ucenici, profesori, kursevi, grupe, upisi, termini] = await Promise.all([
                 api("/api/statistika"), api("/api/ucenici"), api("/api/profesori"), api("/api/kursevi"), api("/api/grupe"), api("/api/upisi"), api("/api/termini")
             ]);
+
             Object.assign(state, { ucenici, prikazaniUcenici: ucenici, profesori, prikazaniProfesori: profesori, kursevi, grupe, upisi, termini });
+
+            Object.assign(state, { ucenici, prikazaniUcenici: ucenici, profesori, kursevi, grupe, upisi, termini });
+
             byId("mUcenici").textContent = stats.brojUcenika;
             byId("mProfesori").textContent = stats.brojProfesora;
             byId("mKursevi").textContent = stats.brojKurseva;
@@ -769,6 +784,7 @@
     }
 
     let ucenikPretragaTimer;
+
     let profesorPretragaTimer;
 
     async function pretraziUcenike() {
@@ -781,6 +797,7 @@
         }
     }
 
+
     async function pretraziProfesore() {
         if (!state.admin) return;
         try {
@@ -790,6 +807,7 @@
             notify(error.message, "error");
         }
     }
+
 
     function renderMojPregled(pregled) {
         state.mojPregled = pregled;

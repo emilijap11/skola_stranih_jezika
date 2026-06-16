@@ -53,7 +53,11 @@ class UcenikControllerTest {
     }
 
     @Test
+
     void pretrazujeUcenikePoImenuIliPrezimenu() throws Exception {
+
+    void pretrazujeUcenikePoPojmu() throws Exception {
+
         Ucenik ucenik = new Ucenik("Petar", "Jovanovic", "petar@example.com", LocalDate.of(2026, 6, 1));
         ReflectionTestUtils.setField(ucenik, "id", 2L);
         when(service.pretrazi("petar")).thenReturn(List.of(ucenik));
