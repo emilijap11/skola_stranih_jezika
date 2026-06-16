@@ -26,8 +26,8 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Build application
-        run: mvn -B -DskipTests package
+      - name: Build and test application
+        run: mvn -B verify
 
       - name: Start application
         run: |
