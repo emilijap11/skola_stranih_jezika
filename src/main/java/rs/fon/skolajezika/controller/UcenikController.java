@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rs.fon.skolajezika.dto.Requests.UcenikRequest;
 import rs.fon.skolajezika.dto.Responses.UcenikResponse;
@@ -34,8 +35,8 @@ public class UcenikController {
     }
 
     @GetMapping
-    public List<UcenikResponse> svi() {
-        return service.svi().stream().map(UcenikResponse::from).toList();
+    public List<UcenikResponse> svi(@RequestParam(required = false) String pretraga) {
+        return service.pretrazi(pretraga).stream().map(UcenikResponse::from).toList();
     }
 
     @GetMapping("/{id}")
