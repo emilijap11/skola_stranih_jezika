@@ -13,5 +13,7 @@ public interface ProfesorService {
 
     List<Profesor> svi();
 
+    List<Profesor> pretrazi(String pojam);
+
     Profesor nadji(Long id);
 }

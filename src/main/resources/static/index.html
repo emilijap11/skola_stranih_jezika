@@ -152,6 +152,14 @@
         .table-filter { padding: 12px 17px; border-bottom: 1px solid var(--line); background: #fbfcfd; }
         .table-filter label { margin: 0 0 5px; }
         .student-payments { margin-top: 18px; }
+        .table-filter {
+            display: grid;
+            grid-template-columns: 170px minmax(220px, 360px);
+            align-items: center;
+            gap: 10px;
+            padding: 14px 17px 0;
+        }
+        .table-filter label { margin: 0; }
         .box-title {
             padding: 15px 17px;
             border-bottom: 1px solid var(--line);
@@ -390,7 +398,14 @@
                 <button class="primary-btn" type="submit">Sacuvaj profesora</button>
                 <button class="secondary-btn" type="button" onclick="otkaziIzmenu('profesor')">Otkazi izmenu</button>
             </form>
-            <div class="table-box"><h2 class="box-title">Evidentirani profesori</h2><div id="profesoriTabela"></div></div>
+            <div class="table-box">
+                <h2 class="box-title">Evidentirani profesori</h2>
+                <div class="table-filter">
+                    <label for="profesorPretraga">Pretraga profesora</label>
+                    <input id="profesorPretraga" placeholder="Ime ili prezime">
+                </div>
+                <div id="profesoriTabela"></div>
+            </div>
         </div>
         <div class="table-box student-payments">
             <h2 class="box-title" id="profesorIsplateNaslov">Mesecne isplate profesora</h2>
@@ -447,7 +462,14 @@
                 <button class="primary-btn" type="submit">Sacuvaj grupu</button>
                 <button class="secondary-btn" type="button" onclick="otkaziIzmenu('grupa')">Otkazi izmenu</button>
             </form>
-            <div class="table-box"><h2 class="box-title">Grupe i individualni ucenici</h2><div id="grupeTabela"></div></div>
+            <div class="table-box">
+                <h2 class="box-title">Grupe i individualni ucenici</h2>
+                <div class="table-filter">
+                    <label for="grupaPretraga">Pretraga grupe</label>
+                    <input id="grupaPretraga" placeholder="Naziv grupe">
+                </div>
+                <div id="grupeTabela"></div>
+            </div>
         </div>
     </section>
 
@@ -566,7 +588,11 @@
 <script>
     const JEZICI = ["ENGLESKI", "NEMACKI", "FRANCUSKI", "SPANSKI", "ITALIJANSKI"];
     const NIVOI = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+    const state = { ucenici: [], prikazaniUcenici: [], profesori: [], prikazaniProfesori: [], kursevi: [], grupe: [], upisi: [], termini: [], grupaUcenikIds: [], mojPregled: null, izabraniUcenikId: null, izabraniProfesorId: null, izmena: null, korisnik: null, admin: false, profesor: false, ucenik: false };
+
     const state = { ucenici: [], prikazaniUcenici: [], profesori: [], kursevi: [], grupe: [], upisi: [], termini: [], grupaUcenikIds: [], mojPregled: null, izabraniUcenikId: null, izabraniProfesorId: null, izmena: null, korisnik: null, admin: false, profesor: false, ucenik: false };
+
 
     const byId = id => document.getElementById(id);
     const today = () => new Date().toISOString().slice(0, 10);
@@ -615,22 +641,39 @@
         return pojam ? `/api/ucenici?pretraga=${encodeURIComponent(pojam)}` : "/api/ucenici";
     }
 
+
+    function profesoriApiUrl() {
+        const pojam = byId("profesorPretraga")?.value.trim();
+        return pojam ? `/api/profesori?pretraga=${encodeURIComponent(pojam)}` : "/api/profesori";
+    }
+
+
+
     function render() {
         const prikazaniUcenici = state.prikazaniUcenici.length || byId("ucenikPretraga")?.value.trim()
             ? state.prikazaniUcenici
             : state.ucenici;
+
+        const prikazaniProfesori = state.prikazaniProfesori.length || byId("profesorPretraga")?.value.trim()
+            ? state.prikazaniProfesori
+            : state.profesori;
+        const grupaPojam = byId("grupaPretraga")?.value.trim().toLowerCase();
+        const prikazaneGrupe = grupaPojam
+            ? state.grupe.filter(grupa => grupa.naziv.toLowerCase().includes(grupaPojam))
+            : state.grupe;
+
         const ucenikHeaders = state.admin
             ? ["ID", "Ime i prezime", "Kontakt", "Datum upisa", "Uplate", "Akcija"]
             : ["ID", "Ime i prezime", "Kontakt", "Datum upisa"];
         byId("uceniciTabela").innerHTML = table(ucenikHeaders, prikazaniUcenici.map(x => state.admin
             ? `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${esc(x.kontakt)}</td><td>${x.datumUpisa}</td><td><button class="action-btn" onclick="loadUcenikUplate(${x.id})">Pregled</button></td><td><button class="action-btn" onclick="urediUcenika(${x.id})">Uredi</button></td></tr>`
             : `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${esc(x.kontakt)}</td><td>${x.datumUpisa}</td></tr>`));
-        byId("profesoriTabela").innerHTML = table(["ID", "Profesor", "Jezici", "Nivoi", "Licenca", "Angazovan od", "Naknada", "Isplate", "Akcija"], state.profesori.map(x =>
+        byId("profesoriTabela").innerHTML = table(["ID", "Profesor", "Jezici", "Nivoi", "Licenca", "Angazovan od", "Naknada", "Isplate", "Akcija"], prikazaniProfesori.map(x =>
             `<tr><td>${x.id}</td><td>${esc(x.ime)} ${esc(x.prezime)}</td><td>${x.jezici.join(", ")}</td><td>${x.nivoi.join(", ")}</td><td>${esc(x.brojLicence)}</td><td>${x.datumAngazovanja}</td><td>${x.mesecnaNaknada}</td><td><button class="action-btn" onclick="loadProfesorIsplate(${x.id})">Pregled</button></td><td><button class="action-btn" onclick="urediProfesora(${x.id})">Uredi</button></td></tr>`));
         byId("kurseviTabela").innerHTML = table(["ID", "Jezik", "Nivo", "Tip", "Akcija"], state.kursevi.map(x =>
             `<tr><td>${x.id}</td><td>${x.jezik}</td><td>${x.nivo}</td><td>${x.tip}</td><td><button class="action-btn" onclick="urediKurs(${x.id})">Uredi</button></td></tr>`));
         const grupaHeaders = ["ID", "Naziv", "Profesor", "Kurs", "Popunjenost", "Akcija"];
-        byId("grupeTabela").innerHTML = table(grupaHeaders, state.grupe.map(x =>
+        byId("grupeTabela").innerHTML = table(grupaHeaders, prikazaneGrupe.map(x =>
             `<tr><td>${x.id}</td><td>${esc(x.naziv)}</td><td>${state.profesor ? "Moj nalog" : esc(nameOf(state.profesori, x.profesorId, p => `${p.ime} ${p.prezime}`))}</td><td>${esc(nameOf(state.kursevi, x.kursId, k => `${k.jezik} ${k.nivo} - ${k.tip}`))}</td><td>${x.brojUcenika}/${x.kapacitet}</td><td><button class="action-btn" onclick="dodajUcenikaUGrupu(${x.id})">${x.brojUcenika < x.kapacitet ? "Dodaj ucenika" : "Uredi ucenike"}</button> <button class="action-btn" onclick="urediGrupu(${x.id})">Uredi grupu</button></td></tr>`));
         const upisHeaders = state.admin
             ? ["ID", "Ucenik", "Kurs", "Grupa / profesor", "Pocetak", "Status", "Akcija"]
@@ -677,7 +720,11 @@
             const [stats, ucenici, profesori, kursevi, grupe, upisi, termini] = await Promise.all([
                 api("/api/statistika"), api("/api/ucenici"), api("/api/profesori"), api("/api/kursevi"), api("/api/grupe"), api("/api/upisi"), api("/api/termini")
             ]);
+
+            Object.assign(state, { ucenici, prikazaniUcenici: ucenici, profesori, prikazaniProfesori: profesori, kursevi, grupe, upisi, termini });
+
             Object.assign(state, { ucenici, prikazaniUcenici: ucenici, profesori, kursevi, grupe, upisi, termini });
+
             byId("mUcenici").textContent = stats.brojUcenika;
             byId("mProfesori").textContent = stats.brojProfesora;
             byId("mKursevi").textContent = stats.brojKurseva;
@@ -737,6 +784,9 @@
     }
 
     let ucenikPretragaTimer;
+
+    let profesorPretragaTimer;
+
     async function pretraziUcenike() {
         if (state.ucenik) return;
         try {
@@ -746,6 +796,18 @@
             notify(error.message, "error");
         }
     }
+
+
+    async function pretraziProfesore() {
+        if (!state.admin) return;
+        try {
+            state.prikazaniProfesori = await api(profesoriApiUrl());
+            render();
+        } catch (error) {
+            notify(error.message, "error");
+        }
+    }
+
 
     function renderMojPregled(pregled) {
         state.mojPregled = pregled;
@@ -1227,6 +1289,11 @@
         ucenikPretragaTimer = setTimeout(pretraziUcenike, 250);
     });
     byId("profesorForm").addEventListener("submit", e => { e.preventDefault(); submit("profesor", "/api/profesori", { ime: byId("pIme").value, prezime: byId("pPrezime").value, brojLicence: byId("pLicenca").value, datumAngazovanja: byId("pDatum").value, mesecnaNaknada: Number(byId("pNaknada").value), jezici: checkedValues(byId("pJezici")), nivoi: checkedValues(byId("pNivoi")) }, "Profesor je sacuvan."); });
+    byId("profesorPretraga").addEventListener("input", () => {
+        clearTimeout(profesorPretragaTimer);
+        profesorPretragaTimer = setTimeout(pretraziProfesore, 250);
+    });
+    byId("grupaPretraga").addEventListener("input", render);
     byId("kursForm").addEventListener("submit", e => { e.preventDefault(); submit("kurs", "/api/kursevi", { jezik: byId("kJezik").value, nivo: byId("kNivo").value, tip: byId("kTip").value, cenaMesecno: Number(byId("kCena").value) }, "Kurs je sacuvan."); });
     byId("upisForm").addEventListener("submit", e => { e.preventDefault(); submit("upis", "/api/upisi", { ucenikId: Number(byId("upUcenik").value), kursId: Number(byId("upKurs").value), grupaId: Number(byId("upGrupa").value), datumPocetka: byId("upDatum").value }, "Ucenik je dodat u grupu."); });
     byId("grupaForm").addEventListener("submit", e => {
