@@ -8,6 +8,7 @@ import rs.fon.skolajezika.model.Ucenik;
 import rs.fon.skolajezika.repository.UcenikRepository;
 import rs.fon.skolajezika.service.UcenikService;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class UcenikServiceImpl implements UcenikService {
@@ -36,6 +37,23 @@ public class UcenikServiceImpl implements UcenikService {
     @Transactional(readOnly = true)
     public List<Ucenik> svi() {
         return repository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Ucenik> pretrazi(String pojam) {
+        if (pojam == null || pojam.isBlank()) {
+            return svi();
+        }
+        String kriterijum = pojam.toLowerCase(Locale.ROOT).trim();
+        return repository.findAll().stream()
+                .filter(ucenik -> sadrzi(ucenik.getIme(), kriterijum)
+                        || sadrzi(ucenik.getPrezime(), kriterijum))
+                .toList();
+    }
+
+    private boolean sadrzi(String vrednost, String kriterijum) {
+        return vrednost != null && vrednost.toLowerCase(Locale.ROOT).contains(kriterijum);
     }
 
     @Override

@@ -13,6 +13,8 @@ public interface UcenikService {
 
     List<Ucenik> svi();
 
+    List<Ucenik> pretrazi(String pojam);
+
     Ucenik nadji(Long id);
 
     Ucenik promeniKontakt(Long id, String kontakt);
