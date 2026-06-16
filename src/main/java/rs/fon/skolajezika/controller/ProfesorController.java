@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rs.fon.skolajezika.dto.Requests.ProfesorRequest;
 import rs.fon.skolajezika.dto.Responses.ProfesorResponse;
@@ -41,7 +42,7 @@ public class ProfesorController {
     }
 
     @GetMapping
-    public List<ProfesorResponse> svi() {
-        return service.svi().stream().map(ProfesorResponse::from).toList();
+    public List<ProfesorResponse> svi(@RequestParam(required = false) String pretraga) {
+        return service.pretrazi(pretraga).stream().map(ProfesorResponse::from).toList();
     }
 }

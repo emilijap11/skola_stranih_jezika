@@ -8,6 +8,7 @@ import rs.fon.skolajezika.model.Profesor;
 import rs.fon.skolajezika.repository.ProfesorRepository;
 import rs.fon.skolajezika.service.ProfesorService;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class ProfesorServiceImpl implements ProfesorService {
@@ -38,6 +39,23 @@ public class ProfesorServiceImpl implements ProfesorService {
     @Transactional(readOnly = true)
     public List<Profesor> svi() {
         return repository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Profesor> pretrazi(String pojam) {
+        if (pojam == null || pojam.isBlank()) {
+            return svi();
+        }
+        String kriterijum = pojam.toLowerCase(Locale.ROOT).trim();
+        return repository.findAll().stream()
+                .filter(profesor -> sadrzi(profesor.getIme(), kriterijum)
+                        || sadrzi(profesor.getPrezime(), kriterijum))
+                .toList();
+    }
+
+    private boolean sadrzi(String vrednost, String kriterijum) {
+        return vrednost != null && vrednost.toLowerCase(Locale.ROOT).contains(kriterijum);
     }
 
     @Override

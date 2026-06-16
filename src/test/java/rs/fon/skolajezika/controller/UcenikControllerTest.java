@@ -43,13 +43,25 @@ class UcenikControllerTest {
     void vracaSveUcenike() throws Exception {
         Ucenik ucenik = new Ucenik("Ana", "Markovic", "ana@example.com", LocalDate.of(2026, 6, 1));
         ReflectionTestUtils.setField(ucenik, "id", 1L);
-        when(service.svi()).thenReturn(List.of(ucenik));
+        when(service.pretrazi(null)).thenReturn(List.of(ucenik));
 
         mockMvc.perform(get("/api/ucenici"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].ime").value("Ana"))
                 .andExpect(jsonPath("$[0].prezime").value("Markovic"));
+    }
+
+    @Test
+    void pretrazujeUcenikePoImenuIliPrezimenu() throws Exception {
+        Ucenik ucenik = new Ucenik("Petar", "Jovanovic", "petar@example.com", LocalDate.of(2026, 6, 1));
+        ReflectionTestUtils.setField(ucenik, "id", 2L);
+        when(service.pretrazi("petar")).thenReturn(List.of(ucenik));
+
+        mockMvc.perform(get("/api/ucenici").param("pretraga", "petar"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(2))
+                .andExpect(jsonPath("$[0].ime").value("Petar"));
     }
 
     @Test
